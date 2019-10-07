@@ -1,11 +1,3 @@
-#%% Change working directory from the workspace root to the ipynb file location. Turn this addition off with the DataScience.changeDirOnImportExport setting
-# ms-python.python added
-import os
-try:
-	os.chdir(os.path.join(os.getcwd(), 'L1'))
-	print(os.getcwd())
-except:
-	pass
 
 #%% imports 
 import technicals as t
@@ -27,10 +19,12 @@ from sklearn.metrics import confusion_matrix
 creds = pathlib.Path("/Users/laumandal/downloads/Real-Time Data Analysis-53764f4812aa.json")
 bucket = 'hist_datasets'
 filepath = pathlib.Path('eod/2019H1 30y/EURUSD_EOD.csv')
-c.dl_from_gcs(creds,bucket,filepath,localfolder='dl')
+c.dl_from_gcs(creds,bucket,filepath,localfolder='downloads')
 
 #%% feature extraction
-df = pd.read_csv(filepath.name,header=1, index_col=0)
+
+dlfile = pathlib.Path('downloads') / pathlib.Path(filepath.name)
+df = pd.read_csv(dlfile,header=1, index_col=0)
 #drop values with N/A in index column (some left in csv from diff size data in excel)
 df = df[df.index.notnull()]
 df.index = pd.to_datetime(df.index, format="%d/%m/%Y") # V IMPORTANT
@@ -150,7 +144,7 @@ predictions = model.predict(test_ds)
 classes = np.argmax(predictions, axis=1) - 1
 
 #Put predictions back on the test set pandas dataframe
-test.loc[:,'predictions'] = classes
+test['predictions'] = classes
 
 #Check confusion matrix
 c=confusion_matrix(y_true=test.label, y_pred=test.predictions, labels=[-1,0,1])
