@@ -150,7 +150,9 @@ test['predictions'] = classes
 c=confusion_matrix(y_true=test.label, y_pred=test.predictions, labels=[-1,0,1])
 print(c)
 
+#%% Save model
 
+model.save('saved_model/mlpv1') 
 
 ###
 # TO EVALUATE:
